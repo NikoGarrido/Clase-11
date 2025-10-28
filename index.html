@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="noindex, nofollow" />
+        <title>Está temblando…</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                font-family: "Chivo", sans-serif;
+                font-optical-sizing: auto;
+                font-style: normal;
+                font-weight: 300;
+                line-height: 1.2;
+                background: #fafafa;
+                color: #222;
+            }
+            div.container {
+                width: min(800px, 90%);
+                margin: 2rem auto;
+            }
+            h1 {
+                font-size: calc(2rem + 3vw);
+                font-weight: 900;
+                padding: 0.125rem;
+            }
+            h2 {
+                margin: 2rem 0 1rem 0;
+                border-bottom: 1px solid black;
+                font-weight: 800;
+                padding: 0.25rem;
+            }
+            a {
+                color: #000;
+                font-weight: 400;
+            }
+            a:hover {
+                text-decoration: none;
+            }
+            p {
+                margin: 0.5rem 0;
+                padding: 0.25rem;
+            }
+            code {
+                font-size: 110%;
+                color: #2B678C;
+                background: #A7D0D9;
+                border-radius: 2px;
+                border: 1px solid #2A86BF;
+            }
+            table {
+                width: 100%;
+                text-align: center;
+            }
+            table a {
+                text-decoration: none;
+            }
+            table a:hover:after {
+                content: " ⤴";
+            }
+            th,
+            td {
+                border-bottom: 1px solid black;
+                border-collapse: collapse;
+                padding: 0.25rem;
+            }
+            td {
+                font-size: 90%;
+            }
+            th,
+            td strong {
+                font-weight: 700;
+            }
+            td span {
+                color: #999;
+            }
+            th:nth-child(1),
+            th:nth-child(2),
+            td:nth-child(1),
+            td:nth-child(2) {
+                text-align: left;
+            }
+            footer {
+                border-top: 3px solid black;
+                margin: 2rem 0 0 0;
+                padding: 1rem;
+                text-align: center;
+                font-size: 80%;
+                letter-spacing: 1px;
+            }
+            .escondido {
+                display: none;
+            }
+
+            th {
+                line-height: 1.5;
+            }
+
+            th svg {
+                width: 1.5rem;
+                height: 1.5rem;
+                margin-bottom: -0.25rem;
+                margin-left:-0.25rem;
+                fill: rgb(211, 69, 69);
+            }
+            
+            div.mapas {
+                width: 100%;
+                height: 400px;
+                margin: 1rem 0 3rem 0;
+                box-shadow: 0 0 4px #eee;
+            }
+            
+            .leaflet-control {
+                display:none
+            }
+        </style>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    </head>
+    <body>
+        <svg xmlns="http://www.w3.org/2000/svg" class="escondido">
+            <symbol id="location" viewBox="0 0 100 100">
+                <path
+                    d="M36.73,36.09a13,13,0,0,0,13,12.67A12.65,12.65,0,0,0,62.44,36.09a13.22,13.22,0,0,0-9.59-12.67v-18A31.37,31.37,0,0,1,81.14,36.58a30.89,30.89,0,0,1-4.55,16.36l-25,41.21H47.93L23,52.94A31.36,31.36,0,0,1,46.7,5.46v18A13.41,13.41,0,0,0,36.73,36.09Z"
+                ></path>
+            </symbol>
+
+            <symbol id="time" viewBox="0 0 16 16">
+                <path d="M8.5 5.5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9z"/>
+  <path d="M6.5 0a.5.5 0 0 0 0 1H7v1.07a7.001 7.001 0 0 0-3.273 12.474l-.602.602a.5.5 0 0 0 .707.708l.746-.746A6.97 6.97 0 0 0 8 16a6.97 6.97 0 0 0 3.422-.892l.746.746a.5.5 0 0 0 .707-.708l-.601-.602A7.001 7.001 0 0 0 9 2.07V1h.5a.5.5 0 0 0 0-1zm1.038 3.018a6 6 0 0 1 .924 0 6 6 0 1 1-.924 0M0 3.5c0 .753.333 1.429.86 1.887A8.04 8.04 0 0 1 4.387 1.86 2.5 2.5 0 0 0 0 3.5M13.5 1c-.753 0-1.429.333-1.887.86a8.04 8.04 0 0 1 3.527 3.527A2.5 2.5 0 0 0 13.5 1"/>
+
+            </symbol>
+
+            <symbol id="tsunami" viewBox="0 0 100 100">
+                <path
+                    d="M91.33,88.22H8.92c-2.22,0-3.57-1.23-3.57-3a4.63,4.63,0,0,1,.61-2L17.77,62.51c5.17-9,16.36-13.9,27.06-13.9,11.57,0,17.35,5.54,17.35,10.46,0,4.3-3.32,7.13-6.77,8.12H53.07a3.49,3.49,0,0,0-3.56-3.82,3.42,3.42,0,0,0-3.32,3.45c0,3.81,4.79,7.5,13.16,7.5,7.75,0,18-3.57,24.6-9.1L94.28,83.3a3.51,3.51,0,0,1,.37,1.84A3,3,0,0,1,91.33,88.22Zm-10.21-28L52.71,10.36a3.19,3.19,0,0,0-5.66,0L26.14,47.51a36.15,36.15,0,0,1,12.67-4.06L49.88,23.89,73.37,64.36A19.72,19.72,0,0,0,81.12,60.17Z"
+                ></path>
+            </symbol>
+
+            <symbol id="magnitude" viewBox="0 0 100 100">
+                <path d="M22.82,34.26a3.72,3.72,0,0,1-5.29,0L9.9,26.63a3.84,3.84,0,0,1,0-5.29,3.57,3.57,0,0,1,5.17,0L22.82,29A3.72,3.72,0,0,1,22.82,34.26ZM73.74,58.49l1.11,16.73v6.64H50v-36H43.85c-4.55,0-9.23,2.33-10.09,13.41L32.53,75.46v6.4H25.15V75.22l1.23-16.73c.74-10.7,5.78-20.05,17.47-20.05H56.27C67.71,38.44,73,47.29,73.74,58.49ZM25.15,87.39h49.7v5.54H25.15Zm21.16-65.8V10.76A3.78,3.78,0,0,1,50,7.07a3.7,3.7,0,0,1,3.69,3.69V21.59A3.71,3.71,0,0,1,50,25.28,3.79,3.79,0,0,1,46.31,21.59ZM90.1,26.88,82.47,34.5a3.69,3.69,0,1,1-5.29-5.16l7.75-7.75a3.79,3.79,0,0,1,5.17,0A3.84,3.84,0,0,1,90.1,26.88Z"></path>
+            </symbol>
+            
+            <symbol id="evacuar" viewBox="0 0 100 200">
+                <path d="M83.21,61.16V94.37H16.79V83.3H38.93V72.23H49a2.57,2.57,0,0,1-2.83-2.46L44.83,57.22,30.57,47.63c-1.48-1-2.46-2.58-1.85-6l2.71-15.5c-2.46,0-4.19,1.6-4.92,6.15L25.4,38.77A2.39,2.39,0,0,1,22.94,41a2.62,2.62,0,0,1-2.34-3.2l1.11-6.27C23.06,24,27.37,20.45,36.47,20.45c5.78,0,8.36,2.58,7.26,9l-3,16.49,7.88,5.41a4.33,4.33,0,0,1,2.21,3.32l2,17.59h8.24V61.16ZM26.51,74c-1.73-.49-2.71-1.48-1.73-4.06L31.3,52.3l5.29,3.32L29.83,74.93Zm10-57.19c-.62-1.11-.86-5.17-.86-7.51a2.49,2.49,0,0,1,.61-2,5.37,5.37,0,0,1,7.63,0c.49.5.49,1.11.49,2.22,0,2.34.12,6.27-.61,7.26C43.36,17.25,42.25,18,40,18,38.07,18,36.72,17.25,36.47,16.76Zm7.87,23.37L45.2,35l6.89,1.84a2.75,2.75,0,0,1,2.09,2.59A2.39,2.39,0,0,1,51.85,42a14.29,14.29,0,0,1-2.22-.37Z"></path>
+            </symbol>
+            
+        </svg>
+
+        <div class="container">
+            <h1>Está temblando…</h1>
+            <p>
+                El <abbr title="United States Geological Survey">USGS</abbr> (Servicio Geológico de Estados Unidos) es responsable del
+                <a href="https://www.usgs.gov/programs/earthquake-hazards" target="_blank">Earthquake Hazards Program</a>, que monitorea e informa sobre movimientos telúricos, además de evaluar sus impactos y riesgos. Los resultados de su
+                monitoreo son compartidos mediante <a href="https://earthquake.usgs.gov/earthquakes/feed/" target="_blank">Real-time Notifications</a>, que pueden consultarse en distintos formatos.
+            </p>
+            <p>
+                Entre los compartidos está el GeoJSON Summary Format, que es actualizado a cada minuto y tiene una estructura (Output) que se explica en su página oficial. Aprovechando la
+                <a href="https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php" target="_blank">explicación de la estructura (Output)</a>, y lo ya preparado en este código fuente, que entra al <code>features:[]</code> para obtener
+                los datos, podemos visualizar lo que sigue:
+            </p>
+            <h2>En Chile</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <svg><use href="#location"></use></svg> place
+                        </th>
+                        <th>
+                            <svg><use href="#time"></use></svg> time
+                        </th>
+                        <th>
+                            <svg><use href="#magnitude"></use></svg> mag
+                        </th>
+                        <th>
+                            <svg><use href="#tsunami"></use></svg> tsunami
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="cl"></tbody>
+            </table>
+
+            <div class="mapas" id="mapaCL"></div>
+
+            <h2>En Japón</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <svg><use href="#location"></use></svg> place
+                        </th>
+                        <th>
+                            <svg><use href="#time"></use></svg> time
+                        </th>
+                        <th>
+                            <svg><use href="#magnitude"></use></svg> mag
+                        </th>
+                        <th>
+                            <svg><use href="#tsunami"></use></svg> tsunami
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="jp"></tbody>
+            </table>
+            
+            <div class="mapas" id="mapaJP"></div>
+            
+            <h2>En México</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <svg><use href="#location"></use></svg> place
+                        </th>
+                        <th>
+                            <svg><use href="#time"></use></svg> time
+                        </th>
+                        <th>
+                            <svg><use href="#magnitude"></use></svg> mag
+                        </th>
+                        <th>
+                            <svg><use href="#tsunami"></use></svg> tsunami
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="mx"></tbody>
+            </table>
+            
+            <div class="mapas" id="mapaMX"></div>
+            
+            <h2>En Rusia</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <svg><use href="#location"></use></svg> place
+                        </th>
+                        <th>
+                            <svg><use href="#time"></use></svg> time
+                        </th>
+                        <th>
+                            <svg><use href="#magnitude"></use></svg> mag
+                        </th>
+                        <th>
+                            <svg><use href="#tsunami"></use></svg> tsunami
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="ru"></tbody>
+            </table>
+            
+            <div class="mapas" id="mapaRU"></div>
+            
+            <h2>Resumen</h2>
+            <p>Registros sobre 2.5 M de la última semana:</p>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50" id="viz"></svg>
+            <footer>
+                <p>Desarrollado por <a href="#" target="_blank">Niko Garrido</a> &copy; 2025</p>
+            </footer>
+        </div>
+        <script>
+            const chilenos = document.getElementById("cl");
+            const japoneses = document.getElementById("jp");
+            const mexicanos = document.getElementById("mx");
+            const rusos = document.getElementById("ru");
+
+            var conteoChilenos = 0;
+            var conteoMexicanos = 0;
+            var conteoJaponeses = 0;
+            var conteoRusos = 0;
+
+            async function datos(url) {
+                try {
+                    let consulta = await fetch(url);
+                    let data = await consulta.json();
+                    let temblores = data.features;
+                    console.log(temblores);
+
+                    //acá meto el mapa
+                    const mapaChile = L.map("mapaCL").setView([-33.4423569,-70.6381361],3);
+                    const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                        maxZoom: 19,
+                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    }).addTo(mapaChile);
+
+                    const mapaJapan = L.map("mapaJP").setView([35.6943161,139.6528949],3);
+                    const tilesJP = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                        maxZoom: 19,
+                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    }).addTo(mapaJapan);
+                    
+                    const mapaMexico = L.map("mapaMX").setView([15.4508006,-93.1655738],3);
+                    const tilesMX = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                        maxZoom: 19,
+                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    }).addTo(mapaMexico);
+                    
+                    const mapaRusia = L.map("mapaRU").setView([55.5807298,36.7259295],3);
+                    const tilesRU = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                        maxZoom: 19,
+                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    }).addTo(mapaRusia);
+                    
+                    temblores.forEach((t) => {
+                        //si es que dice Chile en el place
+                        if (t.properties.place.includes("Chile")) {
+                            chilenos.innerHTML += `<tr>
+                            <td><a href="${t.properties.url}" target="_blank">${t.properties.place}</a></td>
+                            <td>${tiempo(t.properties.time)}</td>
+                            <td>${magnitud(t.properties.mag)}</td>
+                            <td>${tsunami(t.properties.tsunami)}</td>
+                        </tr>`;
+                            conteoChilenos++;
+                            //atención a este cambio
+                            L.marker([t.geometry.coordinates[1], t.geometry.coordinates[0]]).addTo(mapaChile).bindPopup(t.properties.place);
+                        }
+                        //si es que dice Mexico en el place
+                        if (t.properties.place.includes("Mexico")) {
+                            mexicanos.innerHTML += `<tr>
+                            <td><a href="${t.properties.url}" target="_blank">${t.properties.place}</a></td>
+                            <td>${tiempo(t.properties.time)}</td>
+                            <td>${magnitud(t.properties.mag)}</td>
+                            <td>${tsunami(t.properties.tsunami)}</td>
+                        </tr>`;
+                            conteoMexicanos++;
+                            L.marker([t.geometry.coordinates[1], t.geometry.coordinates[0]]).addTo(mapaMexico).bindPopup(t.properties.place);
+                        }
+                        //si es que dice Japan en el place
+                        if (t.properties.place.includes("Japan")) {
+                            japoneses.innerHTML += `<tr>
+                            <td><a href="${t.properties.url}" target="_blank">${t.properties.place}</a></td>
+                            <td>${tiempo(t.properties.time)}</td>
+                            <td>${magnitud(t.properties.mag)}</td>
+                            <td>${tsunami(t.properties.tsunami)}</td>
+                        </tr>`;
+                            conteoJaponeses++;
+                            L.marker([t.geometry.coordinates[1], t.geometry.coordinates[0]]).addTo(mapaJapan).bindPopup(t.properties.place);
+                        }
+                        //si es que dice Russia en el place
+                        if (t.properties.place.includes("Russia")) {
+                            rusos.innerHTML += `<tr>
+                            <td><a href="${t.properties.url}" target="_blank">${t.properties.place}</a></td>
+                            <td>${tiempo(t.properties.time)}</td>
+                            <td>${magnitud(t.properties.mag)}</td>
+                            <td>${tsunami(t.properties.tsunami)}</td>
+                        </tr>`;
+                            conteoRusos++;
+                            L.marker([t.geometry.coordinates[1], t.geometry.coordinates[0]]).addTo(mapaRusia).bindPopup(t.properties.place);
+                        }
+                    });
+
+                    document.getElementById("viz").innerHTML = `<g><circle cx="10" cy="25" r="${
+                        conteoChilenos / 11
+                    }" fill="#2A86BF"></circle><text x="10" y="25" font-size="1.5" dominant-baseline="middle" text-anchor="middle" fill="white">${conteoChilenos}</text><text x="10" y="45" font-size="2" dominant-baseline="middle" text-anchor="middle">Chile</text><g>`;
+
+                    document.getElementById("viz").innerHTML += `<g transform="translate(25)"><circle cx="10" cy="25" r="${
+                        conteoJaponeses / 11
+                    }" fill="#2A86BF"></circle><text x="10" y="25" font-size="1.5" dominant-baseline="middle" text-anchor="middle" fill="white">${conteoJaponeses}</text><text x="10" y="45" font-size="2" dominant-baseline="middle" text-anchor="middle">Japón</text><g>`;
+
+                    document.getElementById("viz").innerHTML += `<g transform="translate(50)"><circle cx="10" cy="25" r="${
+                        conteoMexicanos / 11
+                    }" fill="#2A86BF"></circle><text x="10" y="25" font-size="1.5" dominant-baseline="middle" text-anchor="middle" fill="white">${conteoMexicanos}</text><text x="10" y="45" font-size="2" dominant-baseline="middle" text-anchor="middle">México</text><g>`;
+
+                    document.getElementById("viz").innerHTML += `<g transform="translate(75)"><circle cx="10" cy="25" r="${
+                        conteoRusos / 11
+                    }" fill="#2A86BF"></circle><text x="10" y="25" font-size="1.5" dominant-baseline="middle" text-anchor="middle" fill="white">${conteoRusos}</text><text x="10" y="45" font-size="2" dominant-baseline="middle" text-anchor="middle">Rusia</text><g>`;
+                } catch (error) {
+                    console.error("Error al cargar los datos:", error);
+                }
+            }
+
+            datos("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_month.geojson");
+
+            function magnitud(x) {
+                var numero = x;
+                if (x > 4.9) {
+                    numero = "<strong>" + x + "</strong>";
+                }
+                return numero;
+            }
+
+            function tiempo(x) {
+                var unix = x;
+                var dato = new Date(unix);
+                var formato = dato.toISOString();
+                var corte = formato.split("T");
+                return corte[0] + " a las " + corte[1].split(":")[0] + ":" + corte[1].split(":")[1] + " hrs.";
+            }
+
+            function tsunami(x) {
+                var mensaje = "<span>Sin alerta</span>";
+                if (x == 1) {
+                    mensaje = "<svg><use href= #evacuar></svg><strong>¡tsunami!</strong>¡evacuar!";
+                }
+                return mensaje;
+            }
+        </script>
+    </body>
+</html>
